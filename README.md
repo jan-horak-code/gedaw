@@ -7,5 +7,7 @@ created by Jan Horák
 
 https://github.com/jan-horak-code/gedaw
 
+Cite the code: [![DOI](https://zenodo.org/badge/562630933.svg)](https://zenodo.org/badge/latestdoi/562630933)
+
 Part of this collection was created as a part of the project “Geochemical insight into non-destructive archaeological research”
 This project was supported under the number LTC19016 by subprogram INTER‐COST (LTC19) of program INTEREXCELLENCE by Ministry of Education, Youth and Sport of the Czech Republic.
