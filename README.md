@@ -3,6 +3,8 @@ gedaw (geosciences exploratory data analysis wrappers):
 
 a collection of functions created mainly for dealing with various purposes in archaeological geochemistry and spatial and multivariate data analysis
 
+repository branch called "publication_2024_02_version" contains some changes of some of the scripts which were done during the review process for a publication
+
 created by Jan Horák
 
 https://github.com/jan-horak-code/gedaw
