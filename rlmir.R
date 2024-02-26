@@ -13,7 +13,7 @@ rlmir = function (rst, ind="r", n=NULL, it=10, rin=NULL, rex=NULL, rv=NULL, na=F
 		# rv: Randomized Vectors: if you want to use your own randomized values, pass a list of vectors with these values to this argument; in case the list will be smaller than number of iterations (argument "it"), the rest of iterations will be filled by vectors created by function "randomize"
 		# na is argument passed randomize(), by default na=F, so the NA values will not be included
 		# nc: Number of Classes: passed to comphist() inside randomize()
-		# ms stands for mask, by default ms=T, so the resulting rasterstacks will be masked by original raster
+		# ms stands for mask, by default ms=T, so the resulting rasterbricks will be masked by original raster
 	# lm parameters, limit for needed minimum of values to be used
 		# meth is for method, like pearson etc.
 		# limit is for limit - the lm will be computed only if in both rasters are at least limit number of values (this prevents function of crashing in case ther are only NAs)
@@ -25,8 +25,8 @@ rlmir = function (rst, ind="r", n=NULL, it=10, rin=NULL, rex=NULL, rv=NULL, na=F
 	# list of infos:
 		# original raster
 		# other infos
-	# stack of ranfomized rasters
-	# stacks for every analyzed parameter
+	# brick of ranfomized rasters
+	# brick for every analyzed parameter
 
 
 # ----- start of the function
@@ -101,20 +101,20 @@ results.all=list(
 		randomize.types=c(rep(NA,it)),
 		list.of.randomized.vectors=list()
 		),
-	stack.of.randomizations=NA,
-	stack.of.correlation.coefficient=NA,
-	stack.of.lm.coefficient=NA,
-	stack.of.lm.Intercept=NA,
-	stack.of.r.squared=NA,
-	stack.of.adjusted.r.squared=NA,
-	stack.of.median.of.residuals=NA,
-	stack.of.mean.of.residuals=NA,
-	stack.of.sum.of.residuals=NA,
-	stack.of.median.of.abs.of.residuals=NA,
-	stack.of.mean.of.abs.of.residuals=NA,
-	stack.of.sum.of.abs.of.residuals=NA,
-	stack.of.p.value=NA,
-	stack.of.standard.error=NA
+	brick.of.randomizations=NA,
+	brick.of.correlation.coefficient=NA,
+	brick.of.lm.coefficient=NA,
+	brick.of.lm.Intercept=NA,
+	brick.of.r.squared=NA,
+	brick.of.adjusted.r.squared=NA,
+	brick.of.median.of.residuals=NA,
+	brick.of.mean.of.residuals=NA,
+	brick.of.sum.of.residuals=NA,
+	brick.of.median.of.abs.of.residuals=NA,
+	brick.of.mean.of.abs.of.residuals=NA,
+	brick.of.sum.of.abs.of.residuals=NA,
+	brick.of.p.value=NA,
+	brick.of.standard.error=NA
 	)
 
 
@@ -140,18 +140,18 @@ if (ind=="i")
 	}
 
 
-# --- Randomization: creating the stack with rasters with randomized values
+# --- Randomization: creating the brick with rasters with randomized values
 
-# ---- creating RasterStack of blank rasters to be filled by randomized vectors
+# ---- creating RasterBrick of blank rasters to be filled by randomized vectors
 
-results.all$stack.of.randomizations=rst # the first one...
+results.all$brick.of.randomizations=rst # the first one...
 
 for(ii in 2:it) # stacking iterations
 	{
-		results.all$stack.of.randomizations=stack(results.all$stack.of.randomizations,rst)
+		results.all$brick.of.randomizations=stack(results.all$brick.of.randomizations,rst)
 	}
 
-results.all$stack.of.randomizations[]<-NA
+results.all$brick.of.randomizations[]<-NA
 
 # ---- creating a list of vectors
 
@@ -224,57 +224,57 @@ for (iiii in for.randomize)
 		results.all$information$randomize.types[iiii]=type.chosen
 	}
 
-# --- filling the stack of randomizations by values from list of randomized vectors
+# --- filling the brick of randomizations by values from list of randomized vectors
 
 for(iiiii in c(for.rv,for.randomize))
 	{
-		results.all$stack.of.randomizations[[iiiii]]=setValues(results.all$stack.of.randomizations[[iiiii]], results.all$information$list.of.randomized.vectors[[iiiii]])
+		results.all$brick.of.randomizations[[iiiii]]=setValues(results.all$brick.of.randomizations[[iiiii]], results.all$information$list.of.randomized.vectors[[iiiii]])
 	}
 
 
-# --- preparation of other RasterStacks
+# --- preparation of other RasterBricks
 
 
-results.all$stack.of.correlation.coefficient=results.all$stack.of.randomizations # copying randomizations stack
+results.all$brick.of.correlation.coefficient=results.all$brick.of.randomizations # copying randomizations brick
 
-results.all$stack.of.correlation.coefficient[]<-NA # just making them blank and below copying it making other stacks
+results.all$brick.of.correlation.coefficient[]<-NA # just making them blank and below copying it making other bricks
 
-results.all$stack.of.lm.coefficient=results.all$stack.of.correlation.coefficient
-results.all$stack.of.lm.Intercept=results.all$stack.of.correlation.coefficient
-results.all$stack.of.r.squared=results.all$stack.of.correlation.coefficient
-results.all$stack.of.adjusted.r.squared=results.all$stack.of.correlation.coefficient
-results.all$stack.of.median.of.residuals=results.all$stack.of.correlation.coefficient
-results.all$stack.of.mean.of.residuals=results.all$stack.of.correlation.coefficient
-results.all$stack.of.sum.of.residuals=results.all$stack.of.correlation.coefficient
-results.all$stack.of.median.of.abs.of.residuals=results.all$stack.of.correlation.coefficient
-results.all$stack.of.mean.of.abs.of.residuals=results.all$stack.of.correlation.coefficient
-results.all$stack.of.sum.of.abs.of.residuals=results.all$stack.of.correlation.coefficient
-results.all$stack.of.p.value=results.all$stack.of.correlation.coefficient
-results.all$stack.of.standard.error=results.all$stack.of.correlation.coefficient
+results.all$brick.of.lm.coefficient=results.all$brick.of.correlation.coefficient
+results.all$brick.of.lm.Intercept=results.all$brick.of.correlation.coefficient
+results.all$brick.of.r.squared=results.all$brick.of.correlation.coefficient
+results.all$brick.of.adjusted.r.squared=results.all$brick.of.correlation.coefficient
+results.all$brick.of.median.of.residuals=results.all$brick.of.correlation.coefficient
+results.all$brick.of.mean.of.residuals=results.all$brick.of.correlation.coefficient
+results.all$brick.of.sum.of.residuals=results.all$brick.of.correlation.coefficient
+results.all$brick.of.median.of.abs.of.residuals=results.all$brick.of.correlation.coefficient
+results.all$brick.of.mean.of.abs.of.residuals=results.all$brick.of.correlation.coefficient
+results.all$brick.of.sum.of.abs.of.residuals=results.all$brick.of.correlation.coefficient
+results.all$brick.of.p.value=results.all$brick.of.correlation.coefficient
+results.all$brick.of.standard.error=results.all$brick.of.correlation.coefficient
 
 
-# --- adding original raster into the stack of randomizations, as function getValuesFocal() works on one object...
+# --- adding original raster into the brick of randomizations, as function getValuesFocal() works on one object...
 		# after all is done, this will be removed
 
-results.all$stack.of.randomizations=stack(results.all$stack.of.randomizations,rst)
+results.all$brick.of.randomizations=stack(results.all$brick.of.randomizations,rst)
 
 
 # --- giving names to variables
 
-names(results.all$stack.of.randomizations)			=c(paste(results.all$information$randomized.variable.name, 1:it, sep="."),paste(results.all$information$input.variable.name, "original", sep="."))
-names(results.all$stack.of.correlation.coefficient)		=paste("cor.coef", 1:it, sep=".")
-names(results.all$stack.of.lm.coefficient)			=paste("lm.coef", 1:it, sep=".")
-names(results.all$stack.of.lm.Intercept)				=paste("intcp", 1:it, sep=".")
-names(results.all$stack.of.r.squared)				=paste("r.sq", 1:it, sep=".")
-names(results.all$stack.of.adjusted.r.squared)			=paste("adj.r.sq", 1:it, sep=".")
-names(results.all$stack.of.median.of.residuals)			=paste("med.resid", 1:it, sep=".")
-names(results.all$stack.of.mean.of.residuals)			=paste("mean.resid", 1:it, sep=".")
-names(results.all$stack.of.sum.of.residuals)			=paste("sum.resid", 1:it, sep=".")
-names(results.all$stack.of.median.of.abs.of.residuals)	=paste("med.abs.resid", 1:it, sep=".")
-names(results.all$stack.of.mean.of.abs.of.residuals)		=paste("mean.abs.resid", 1:it, sep=".")
-names(results.all$stack.of.sum.of.abs.of.residuals)		=paste("sum.abs.resid", 1:it, sep=".")
-names(results.all$stack.of.p.value)					=paste("p.val", 1:it, sep=".")
-names(results.all$stack.of.standard.error)			=paste("stde", 1:it, sep=".")
+names(results.all$brick.of.randomizations)			=c(paste(results.all$information$randomized.variable.name, 1:it, sep="."),paste(results.all$information$input.variable.name, "original", sep="."))
+names(results.all$brick.of.correlation.coefficient)		=paste("cor.coef", 1:it, sep=".")
+names(results.all$brick.of.lm.coefficient)			=paste("lm.coef", 1:it, sep=".")
+names(results.all$brick.of.lm.Intercept)				=paste("intcp", 1:it, sep=".")
+names(results.all$brick.of.r.squared)				=paste("r.sq", 1:it, sep=".")
+names(results.all$brick.of.adjusted.r.squared)			=paste("adj.r.sq", 1:it, sep=".")
+names(results.all$brick.of.median.of.residuals)			=paste("med.resid", 1:it, sep=".")
+names(results.all$brick.of.mean.of.residuals)			=paste("mean.resid", 1:it, sep=".")
+names(results.all$brick.of.sum.of.residuals)			=paste("sum.resid", 1:it, sep=".")
+names(results.all$brick.of.median.of.abs.of.residuals)	=paste("med.abs.resid", 1:it, sep=".")
+names(results.all$brick.of.mean.of.abs.of.residuals)		=paste("mean.abs.resid", 1:it, sep=".")
+names(results.all$brick.of.sum.of.abs.of.residuals)		=paste("sum.abs.resid", 1:it, sep=".")
+names(results.all$brick.of.p.value)					=paste("p.val", 1:it, sep=".")
+names(results.all$brick.of.standard.error)			=paste("stde", 1:it, sep=".")
 
 
 # ------ resulting list is ready to be filled
@@ -285,14 +285,14 @@ names(results.all$stack.of.standard.error)			=paste("stde", 1:it, sep=".")
 # ----------
 # ------ now making loop, which will produce and fill in the results
 
-for (j in 1:it)	# loop 1 j iterating through stack of randomizations
+for (j in 1:it)	# loop 1 j iterating through brick of randomizations
 	{
 
 		cat(paste("[starting iteration ", j, " of ", it, "; at: ", format(Sys.time(), "%H:%M:%S"),"]",sep=""),"\n")
 		
 		for (jj in 1:rows.n)	# loop 2 jj iterating through raster rows and applying getFocalValues, the rasters are same, so I am doing it on specified raster
 			{
-				fvjj <- getValuesFocal(results.all$stack.of.randomizations[[c(j,it+1)]], row=jj, nrows=1, ngb = window, array = FALSE)	# ffj is for FocalValues in loop jj; IMPORTANT: getFocalValues gives list, so as the original raster is at the end of stack of randomizations, it will be ALWAYS SECOND here, as it has to be specified later which values will be dependent and which independent
+				fvjj <- getValuesFocal(results.all$brick.of.randomizations[[c(j,it+1)]], row=jj, nrows=1, ngb = window, array = FALSE)	# ffj is for FocalValues in loop jj; IMPORTANT: getFocalValues gives list, so as the original raster is at the end of brick of randomizations, it will be ALWAYS SECOND here, as it has to be specified later which values will be dependent and which independent
 				row.jj.res.cor.c=rep(NA,cols.n)
 				row.jj.res.lm.c=rep(NA,cols.n)
 				row.jj.res.lm.intcp=rep(NA,cols.n)
@@ -366,19 +366,19 @@ for (j in 1:it)	# loop 1 j iterating through stack of randomizations
 					
 				# now the vectors of resulting values for jj row are ready to be filled into jj row in resulting rasters
 				
-				results.all$stack.of.correlation.coefficient[[j]][jj,]=row.jj.res.cor.c
-				results.all$stack.of.lm.coefficient[[j]][jj,]=row.jj.res.lm.c
-				results.all$stack.of.lm.Intercept[[j]][jj,]=row.jj.res.lm.intcp
-				results.all$stack.of.r.squared[[j]][jj,]=row.jj.res.r.sq
-				results.all$stack.of.adjusted.r.squared[[j]][jj,]=row.jj.res.ad.r.sq
-				results.all$stack.of.median.of.residuals[[j]][jj,]=row.jj.med.resid
-				results.all$stack.of.mean.of.residuals[[j]][jj,]=row.jj.mean.resid
-				results.all$stack.of.sum.of.residuals[[j]][jj,]=row.jj.sum.resid
-				results.all$stack.of.median.of.abs.of.residuals[[j]][jj,]=row.jj.med.abs.resid
-				results.all$stack.of.mean.of.abs.of.residuals[[j]][jj,]=row.jj.mean.abs.resid
-				results.all$stack.of.sum.of.abs.of.residuals[[j]][jj,]=row.jj.sum.abs.resid
-				results.all$stack.of.p.value[[j]][jj,]=row.jj.res.pv
-				results.all$stack.of.standard.error[[j]][jj,]=row.jj.res.stde
+				results.all$brick.of.correlation.coefficient[[j]][jj,]=row.jj.res.cor.c
+				results.all$brick.of.lm.coefficient[[j]][jj,]=row.jj.res.lm.c
+				results.all$brick.of.lm.Intercept[[j]][jj,]=row.jj.res.lm.intcp
+				results.all$brick.of.r.squared[[j]][jj,]=row.jj.res.r.sq
+				results.all$brick.of.adjusted.r.squared[[j]][jj,]=row.jj.res.ad.r.sq
+				results.all$brick.of.median.of.residuals[[j]][jj,]=row.jj.med.resid
+				results.all$brick.of.mean.of.residuals[[j]][jj,]=row.jj.mean.resid
+				results.all$brick.of.sum.of.residuals[[j]][jj,]=row.jj.sum.resid
+				results.all$brick.of.median.of.abs.of.residuals[[j]][jj,]=row.jj.med.abs.resid
+				results.all$brick.of.mean.of.abs.of.residuals[[j]][jj,]=row.jj.mean.abs.resid
+				results.all$brick.of.sum.of.abs.of.residuals[[j]][jj,]=row.jj.sum.abs.resid
+				results.all$brick.of.p.value[[j]][jj,]=row.jj.res.pv
+				results.all$brick.of.standard.error[[j]][jj,]=row.jj.res.stde
 
 			}	# end of loop 2 jj
 		
@@ -386,29 +386,29 @@ for (j in 1:it)	# loop 1 j iterating through stack of randomizations
 	
 
 
-# --- removing original raster from stack of randomizations
+# --- removing original raster from brick of randomizations
 
-results.all$stack.of.randomizations=results.all$stack.of.randomizations[[-c(it+1)]]
+results.all$brick.of.randomizations=results.all$brick.of.randomizations[[-c(it+1)]]
 
 
-# ---- masking resulting raster stacks
+# ---- masking resulting raster bricks
 
 if (ms)
 	{
-		results.all$stack.of.randomizations			=mask(results.all$stack.of.randomizations,rst)
-		results.all$stack.of.correlation.coefficient	=mask(results.all$stack.of.correlation.coefficient,rst)
-		results.all$stack.of.lm.coefficient			=mask(results.all$stack.of.lm.coefficient,rst)
-		results.all$stack.of.lm.Intercept			=mask(results.all$stack.of.lm.Intercept,rst)
-		results.all$stack.of.r.squared			=mask(results.all$stack.of.r.squared,rst)
-		results.all$stack.of.adjusted.r.squared		=mask(results.all$stack.of.adjusted.r.squared,rst)
-		results.all$stack.of.median.of.residuals		=mask(results.all$stack.of.median.of.residuals,rst)
-		results.all$stack.of.mean.of.residuals		=mask(results.all$stack.of.mean.of.residuals,rst)
-		results.all$stack.of.sum.of.residuals		=mask(results.all$stack.of.sum.of.residuals,rst)
-		results.all$stack.of.median.of.abs.of.residuals	=mask(results.all$stack.of.median.of.abs.of.residuals,rst)
-		results.all$stack.of.mean.of.abs.of.residuals	=mask(results.all$stack.of.mean.of.abs.of.residuals,rst)
-		results.all$stack.of.sum.of.abs.of.residuals	=mask(results.all$stack.of.sum.of.abs.of.residuals,rst)
-		results.all$stack.of.p.value				=mask(results.all$stack.of.p.value,rst)
-		results.all$stack.of.standard.error			=mask(results.all$stack.of.standard.error,rst)
+		results.all$brick.of.randomizations			=mask(results.all$brick.of.randomizations,rst)
+		results.all$brick.of.correlation.coefficient	=mask(results.all$brick.of.correlation.coefficient,rst)
+		results.all$brick.of.lm.coefficient			=mask(results.all$brick.of.lm.coefficient,rst)
+		results.all$brick.of.lm.Intercept			=mask(results.all$brick.of.lm.Intercept,rst)
+		results.all$brick.of.r.squared			=mask(results.all$brick.of.r.squared,rst)
+		results.all$brick.of.adjusted.r.squared		=mask(results.all$brick.of.adjusted.r.squared,rst)
+		results.all$brick.of.median.of.residuals		=mask(results.all$brick.of.median.of.residuals,rst)
+		results.all$brick.of.mean.of.residuals		=mask(results.all$brick.of.mean.of.residuals,rst)
+		results.all$brick.of.sum.of.residuals		=mask(results.all$brick.of.sum.of.residuals,rst)
+		results.all$brick.of.median.of.abs.of.residuals	=mask(results.all$brick.of.median.of.abs.of.residuals,rst)
+		results.all$brick.of.mean.of.abs.of.residuals	=mask(results.all$brick.of.mean.of.abs.of.residuals,rst)
+		results.all$brick.of.sum.of.abs.of.residuals	=mask(results.all$brick.of.sum.of.abs.of.residuals,rst)
+		results.all$brick.of.p.value				=mask(results.all$brick.of.p.value,rst)
+		results.all$brick.of.standard.error			=mask(results.all$brick.of.standard.error,rst)
 	}
 
 # ----- end of the function
